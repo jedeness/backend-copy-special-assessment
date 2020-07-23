@@ -7,7 +7,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 # give credits
-__author__ = "Jed Enas and Daniel Lomelino"
+__author__ = "Jed Enas, with help from: Daniel Lomelino, Jack Detke"
 
 import re
 import os
@@ -32,12 +32,16 @@ def get_special_paths(dirname):
 
 
 def copy_to(path_list, dest_dir):
-    # your code here
-    return
+    """Makes a copy of the directory with the special files"""
+    if not os.path.isdir(dest_dir):
+        os.makedirs(dest_dir)
+    for path in path_list:
+        shutil.copy(path, dest_dir)
 
 
 def zip_to(path_list, dest_zip):
-    cmd = ['zip,' '-j', dest_zip]
+    """Contains a zip file with the directory copy"""
+    cmd = ['zip', '-j', dest_zip]
     cmd.extend(path_list)
     print("Command I'm going to do:")
     print(' '.join(cmd))
@@ -63,12 +67,18 @@ def main(args):
     # exit(1).
 
     # Your code here: Invoke (call) your functions
-    special_paths = get_special_paths(ns.from_dir)
+    if len(sys.argv) < 1:
+        parser.print_usage()
+    path_list = get_special_paths(ns.from_dir)
     
-    if ns.tozip:
-        zip_to(special_paths, ns.tozip)
-    else: 
-        print('\n'.join(special_paths))
+    if ns.todir:
+        copy_to(path_list, ns.todir)
+    elif ns.tozip:
+        zip_to(path_list, ns.tozip)
+    else:
+        for path in path_list:
+            print(path)
+        # print('\n'.join(path_list))
 
 
 if __name__ == "__main__":
